@@ -27,7 +27,7 @@ b.Heartbeat:Connect(function()
 	local l = math.clamp(d.p + k * 0.15, 0.175, 0.25)
 	local m = math.clamp(d.s + k * 0.05, 0.1, 0.2)
 	local n = f.Velocity;
-	local o = Vector3.new(n.X, n.Y * 0.35, n.Z) * l;
+	local o = Vector3.new(n.X, n.Y * 0.38, n.Z) * l;
 	h = h:Lerp(o, m)
 	if d.v == 1 then
 		g.CameraOffset = f.CFrame:VectorToObjectSpace(- h + Vector3.new(0, d.c, 0))
