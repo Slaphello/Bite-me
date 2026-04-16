@@ -26,6 +26,8 @@ b.Heartbeat:Connect(function()
 	local k = c:GetNetworkPing()
 	local l = math.clamp(d.p + k * 0.25, 0.16, 0.235)
 	local m = math.clamp(d.s + k * 0.125, 0.1, 0.2)
+    print(l) -- just testing
+    print(m)
 	local n = f.Velocity;
 	local o = Vector3.new(n.X, n.Y * 0.35, n.Z) * l;
 	h = h:Lerp(o, m)
