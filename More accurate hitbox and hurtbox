@@ -3,12 +3,12 @@ local b = game:GetService("RunService")
 local c = a.LocalPlayer;
 local d = {
 	E = 1,
-	P = .1385,
+	P = .14,
 	S = .1,
 	C = 1,
 	Y = 1,
-	PL = .1385,
-	PH = .235,
+	PL = .14,
+	PH = .215,
 	SL = .1,
 	SH = .2
 }
