@@ -23,8 +23,8 @@ b.Heartbeat:Connect(function()
 	end
 
 	local k = c:GetNetworkPing()
-	local l = math.clamp(d.Prediction + k * 0.16, 0.13, 0.25)
-	local m = math.clamp(d.Smoothness + k * 0.08, 0.1, 0.2)
+	local l = math.clamp(d.Prediction + k * 0.16, 0.09, 0.25)
+	local m = math.clamp(d.Smoothness + k * 0.065, 0.09, 0.2)
 
 	local n = f.Velocity
 	local o = Vector3.new(n.X, n.Y * 0.35, n.Z) * l
