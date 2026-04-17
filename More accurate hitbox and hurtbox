@@ -30,7 +30,7 @@ b.Heartbeat:Connect(function()
 	local o = Vector3.new(n.X, n.Y * 0.35, n.Z) * l
 	h = h:Lerp(o, m)
 
-	g.CameraOffset = f.CFrame:VectorToObjectSpace(-h + Vector3.new(0, 1, 0))
+	g.CameraOffset = f.CFrame:VectorToObjectSpace(-h + Vector3.new(0, 0, 0))
 
 	local p = f.CFrame
 	f.CFrame = p + h
