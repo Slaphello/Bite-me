@@ -1,43 +1,36 @@
 local a = game:GetService("Players")
 local b = game:GetService("RunService")
-local c = a.LocalPlayer
-
-local e, f, g, h = c.Character, nil, nil, Vector3.zero
-
-local function i(j)
-	e = j
-	f = j:WaitForChild("HumanoidRootPart")
-	g = j:WaitForChild("Humanoid")
-	h = Vector3.zero
-end
-
+local c = a.LocalPlayer;
+local d, e, f, g = c.Character, nil, nil, Vector3.zero;
+local function h(i)
+	d = i;
+	e = i:WaitForChild("HumanoidRootPart")
+	f = i:WaitForChild("Humanoid")
+	g = Vector3.zero
+end;
 if c.Character then
-	i(c.Character)
-end
-c.CharacterAdded:Connect(i)
-
+	h(c.Character)
+end;
+c.CharacterAdded:Connect(h)
 b.Heartbeat:Connect(function()
-	local d = _G.cfg
-	if not d or not e or not f or not g then
+	local j = _G.cfg;
+	if not j or not d or not e or not f then
 		return
-	end
-
+	end;
+	if f.Health <= 0 then
+		return
+	end;
 	local k = c:GetNetworkPing()
-	local l = math.clamp(d.Prediction + k * 0.16, 0.09, 0.25)
-	local m = math.clamp(d.Smoothness + k * 0.065, 0.09, 0.2)
-
-	local n = f.Velocity
-	local o = Vector3.new(n.X, n.Y * 0.35, n.Z) * l
-	h = h:Lerp(o, m)
-
-	g.CameraOffset = f.CFrame:VectorToObjectSpace(-h + Vector3.new(0, 0, 0))
-
-	local p = f.CFrame
-	f.CFrame = p + h
-
+	local l = math.clamp(j.Prediction + k * 0.16, 0.09, 0.25)
+	local m = math.clamp(j.Smoothness + k * 0.065, 0.09, 0.2)
+	local n = e.Velocity;
+	local o = Vector3.new(n.X, n.Y * 0.35, n.Z) * l;
+	g = g:Lerp(o, m)
+	f.CameraOffset = - g;
+	local p = e.CFrame;
+	e.CFrame = p + g;
 	b.RenderStepped:Wait()
-
-	if f.Parent then
-		f.CFrame = p
+	if e.Parent then
+		e.CFrame = p
 	end
 end)
