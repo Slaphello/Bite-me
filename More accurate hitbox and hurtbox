@@ -3,7 +3,7 @@ local b = game:GetService("RunService")
 local c = a.LocalPlayer;
 local d = {
 	e = 1,
-	p = 0.1,
+	p = 0.15,
 	s = 0.1,
 	v = 1,
 	c = 1
@@ -24,7 +24,7 @@ b.Heartbeat:Connect(function()
 		return
 	end;
 	local k = c:GetNetworkPing()
-	local l = math.clamp(d.p + k * 0.15, 0.175, 0.25)
+	local l = math.clamp(d.p + k * 0.15, 0.15, 0.25)
 	local m = math.clamp(d.s + k * 0.05, 0.1, 0.2)
 	local n = f.Velocity;
 	local o = Vector3.new(n.X, n.Y * 0.38, n.Z) * l;
