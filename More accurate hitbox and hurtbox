@@ -2,32 +2,46 @@ local a = game:GetService("Players")
 local b = game:GetService("RunService")
 local c = a.LocalPlayer;
 local d, e, f, g = c.Character, nil, nil, Vector3.zero;
-local function h(i)
-	d = i;
-	e = i:WaitForChild("HumanoidRootPart")
-	f = i:WaitForChild("Humanoid")
+local h = {}
+local i = 30;
+local function j()
+	local k = c:GetNetworkPing()
+	table.insert(h, k)
+	if # h > i then
+		table.remove(h, 1)
+	end;
+	local l = 0;
+	for m, n in ipairs(h) do
+		l = l + n
+	end;
+	return l / # h
+end;
+local function o(p)
+	d = p;
+	e = p:WaitForChild("HumanoidRootPart")
+	f = p:WaitForChild("Humanoid")
 	g = Vector3.zero
 end;
 if c.Character then
-	h(c.Character)
+	o(c.Character)
 end;
-c.CharacterAdded:Connect(h)
+c.CharacterAdded:Connect(o)
 b.Heartbeat:Connect(function()
-	local j = _G.cfg;
-	if not j or not d or not e or not f then
+	local q = _G.cfg;
+	if not q or not d or not e or not f then
 		return
 	end;
-	local k = c:GetNetworkPing()
-	local l = math.clamp(j.Prediction + k * 0.16, 0.05, 0.25)
-	local m = math.clamp(j.Smoothness + k * 0.065, 0.09, 0.2)
-	local n = e.AssemblyLinearVelocity;
-	local o = Vector3.new(n.X, n.Y * 0.1, n.Z) * l;
-	g = g:Lerp(o, m)
+	local r = j()
+	local s = math.clamp(q.Prediction + r * 0.16, 0.05, 0.25)
+	local t = math.clamp(q.Smoothness + r * 0.065, 0.09, 0.2)
+	local u = e.AssemblyLinearVelocity;
+	local v = Vector3.new(u.X, u.Y * 0.2, u.Z) * s;
+	g = g:Lerp(v, t)
 	f.CameraOffset = e.CFrame:VectorToObjectSpace(- g)
-	local p = e.CFrame;
-	e.CFrame = p + g;
+	local w = e.CFrame;
+	e.CFrame = w + g;
 	b.RenderStepped:Wait()
 	if e.Parent then
-		e.CFrame = p
+		e.CFrame = w
 	end
 end)
