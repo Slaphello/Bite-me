@@ -1,47 +1,63 @@
-local a = game:GetService("Players")
-local b = game:GetService("RunService")
-local c = a.LocalPlayer;
-local d, e, f, g = c.Character, nil, nil, Vector3.zero;
-local h = {}
-local i = 30;
-local function j()
-	local k = c:GetNetworkPing()
-	table.insert(h, k)
-	if # h > i then
-		table.remove(h, 1)
-	end;
-	local l = 0;
-	for m, n in ipairs(h) do
-		l = l + n
-	end;
-	return l / # h
+local cloneref = cloneref or function(a)
+	return a
 end;
-local function o(p)
-	d = p;
-	e = p:WaitForChild("HumanoidRootPart")
-	f = p:WaitForChild("Humanoid")
-	g = Vector3.zero
+local b = newcclosure or function(c)
+	return c
 end;
-if c.Character then
-	o(c.Character)
+local d = clonefunction or function(c)
+	return c
 end;
-c.CharacterAdded:Connect(o)
-b.Heartbeat:Connect(function()
-	local q = _G.cfg;
-	if not q or not d or not e or not f then
+local e = cloneref(game)
+local f = cloneref(e:GetService("RunService"))
+local g = cloneref(e:GetService("Players"))
+local h = d(e.WaitForChild)
+local i = d(f.Heartbeat.Connect)
+local j = d(f.RenderStepped.Wait)
+local k = d(CFrame.identity.VectorToObjectSpace)
+local l = g.LocalPlayer;
+local m, n, o;
+local p = b(function(q)
+	if not (gethiddenproperty and sethiddenproperty) then
 		return
 	end;
-	local r = j()
-	local s = math.clamp(q.Prediction + r * 0.16, 0.05, 0.25)
-	local t = math.clamp(q.Smoothness + r * 0.065, 0.09, 0.2)
-	local u = e.AssemblyLinearVelocity;
-	local v = Vector3.new(u.X, u.Y * 0.2, u.Z) * s;
-	g = g:Lerp(v, t)
-	f.CameraOffset = e.CFrame:VectorToObjectSpace(- g)
-	local w = e.CFrame;
-	e.CFrame = w + g;
-	b.RenderStepped:Wait()
-	if e.Parent then
-		e.CFrame = w
+	local r = {
+		PhysicsRepRootPart = q,
+		NetworkIsSupporting = true,
+		NetworkOwnershipRule = Enum.NetworkOwnership.Manual
+	}
+	for s, t in pairs(r) do
+		pcall(function()
+			local u = gethiddenproperty(q, s)
+			if u ~= nil then
+				sethiddenproperty(q, s, t)
+				print("[SetHiddenProperty] Success:", s, "->", tostring(t))
+			end
+		end)
 	end
 end)
+local v = b(function(w)
+	m = w;
+	n = h(w, "HumanoidRootPart")
+	o = h(w, "Humanoid")
+	p(n)
+end)
+if l.Character then
+	v(l.Character)
+end;
+i(l.CharacterAdded, v)
+i(f.Heartbeat, b(function()
+	local x = getgenv().cfg;
+	if not (x and m and n and o and n.Parent) then
+		return
+	end;
+	local y = math.clamp(x.Prediction, 0.05, 0.25)
+	local z = n.AssemblyLinearVelocity;
+	local A = Vector3.new(z.X, z.Y * 0.2, z.Z) * y;
+	o.CameraOffset = k(n.CFrame, - A)
+	local B = n.CFrame;
+	n.CFrame = B + A;
+	j(f.RenderStepped)
+	if n.Parent then
+		n.CFrame = B
+	end
+end))
