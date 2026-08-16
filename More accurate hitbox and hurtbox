@@ -17,47 +17,41 @@ local k = d(CFrame.identity.VectorToObjectSpace)
 local l = g.LocalPlayer;
 local m, n, o;
 local p = b(function(q)
-	if not (gethiddenproperty and sethiddenproperty) then
+	if not q then
 		return
 	end;
-	local r = {
-		PhysicsRepRootPart = q,
-		NetworkIsSupporting = true,
-		NetworkOwnershipRule = Enum.NetworkOwnership.Manual
-	}
-	for s, t in pairs(r) do
+	if sethiddenproperty then
 		pcall(function()
-			local u = gethiddenproperty(q, s)
-			if u ~= nil then
-				sethiddenproperty(q, s, t)
-				print("[SetHiddenProperty] Success:", s, "->", tostring(t))
-			end
+			sethiddenproperty(q, "NetworkOwnershipRule", Enum.NetworkOwnership.Manual)
 		end)
-	end
+	end;
+	pcall(function()
+		q.CustomPhysicalProperties = PhysicalProperties.new(0.01, 0, 0, 0, 0)
+	end)
 end)
-local v = b(function(w)
-	m = w;
-	n = h(w, "HumanoidRootPart")
-	o = h(w, "Humanoid")
+local r = b(function(s)
+	m = s;
+	n = h(s, "HumanoidRootPart")
+	o = h(s, "Humanoid")
 	p(n)
 end)
 if l.Character then
-	v(l.Character)
+	r(l.Character)
 end;
-i(l.CharacterAdded, v)
+i(l.CharacterAdded, r)
 i(f.Heartbeat, b(function()
-	local x = getgenv().cfg;
-	if not (x and m and n and o and n.Parent) then
+	local t = _G.cfg;
+	if not (t and m and n and o and n.Parent) then
 		return
 	end;
-	local y = math.clamp(x.Prediction, 0.05, 0.25)
-	local z = n.AssemblyLinearVelocity;
-	local A = Vector3.new(z.X, z.Y * 0.2, z.Z) * y;
-	o.CameraOffset = k(n.CFrame, - A)
-	local B = n.CFrame;
-	n.CFrame = B + A;
+	local u = math.clamp(t.Prediction, 0.05, 0.25)
+	local v = n.AssemblyLinearVelocity;
+	local w = Vector3.new(v.X, v.Y * 0.15, v.Z) * u;
+	o.CameraOffset = k(n.CFrame, - w)
+	local x = n.CFrame;
+	n.CFrame = x + w;
 	j(f.RenderStepped)
 	if n.Parent then
-		n.CFrame = B
+		n.CFrame = x
 	end
 end))
