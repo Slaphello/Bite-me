@@ -1,60 +1,56 @@
-local cloneref = cloneref or function(a)
-	return a
+local a = game:GetService("Players")
+local b = game:GetService("RunService")
+local c = a.LocalPlayer;
+local d = nil;
+local e = nil;
+local f = nil;
+local g = Vector3.zero;
+local h = CFrame.identity;
+local i = nil;
+local j = false;
+local k = 0.15;
+local l = 0.1;
+local m = 0.15;
+local function n(o)
+	d = o;
+	e = o:WaitForChild("HumanoidRootPart")
+	f = o:WaitForChild("Humanoid")
+	g = Vector3.zero;
+	h = CFrame.identity;
+	i = nil;
+	j = false
 end;
-local b = newcclosure or function(c)
-	return c
+if c.Character then
+	n(c.Character)
 end;
-local d = clonefunction or function(c)
-	return c
-end;
-local e = cloneref(game)
-local f = cloneref(e:GetService("RunService"))
-local g = cloneref(e:GetService("Players"))
-local h = d(e.WaitForChild)
-local i = d(f.Heartbeat.Connect)
-local j = d(f.RenderStepped.Wait)
-local k = d(CFrame.identity.VectorToObjectSpace)
-local l = g.LocalPlayer;
-local m, n, o;
-local p = CFrame.fromOrientation;
-local q = b(function(r)
-	if not r then
+c.CharacterAdded:Connect(n)
+b.Heartbeat:Connect(function()
+	if not d or not d.Parent or not e or not e.Parent or not f or f.Health <= 0 then
+		j = false;
 		return
 	end;
-	if sethiddenproperty then
-		pcall(function()
-			sethiddenproperty(r, "NetworkOwnershipRule", Enum.NetworkOwnership.Manual)
-		end)
-	end;
-	pcall(function()
-		r.CustomPhysicalProperties = PhysicalProperties.new(0.01, 0, 0, 0, 0)
-	end)
+	local p = _G.cfg or {}
+	local q = math.clamp(p.Prediction or k, 0.05, 0.2)
+	local r = math.clamp(p.Smoothness or l, 0.05, 0.2)
+	local s = math.clamp(p.AngularPrediction or m, 0.05, 0.2)
+	local t = e.CFrame;
+	i = t;
+	local u = e.AssemblyLinearVelocity;
+	local v = e.AssemblyAngularVelocity;
+	local w = Vector3.new(u.X, u.Y * 0.2, u.Z) * q;
+	g = g:Lerp(w, r)
+	local x = CFrame.Angles(v.X * s, v.Y * s, v.Z * s)
+	h = h:Lerp(x, r)
+	f.CameraOffset = t:VectorToObjectSpace(- g)
+	e.CFrame = t * h + g;
+	j = true
 end)
-local s = b(function(t)
-	m = t;
-	n = h(t, "HumanoidRootPart")
-	o = h(t, "Humanoid")
-	q(n)
-end)
-if l.Character then
-	s(l.Character)
-end;
-i(l.CharacterAdded, s)
-i(f.Heartbeat, b(function()
-	local u = _G.cfg;
-	if not (u and m and n and o and n.Parent) then
+b.RenderStepped:Connect(function()
+	if not j then
 		return
 	end;
-	local v = math.clamp(u.Prediction, 0.05, 0.2)
-	local w = n.AssemblyLinearVelocity;
-	local x = Vector3.new(w.X, w.Y * 0.2, w.Z) * v;
-	local y = n.AssemblyAngularVelocity;
-	local z = p(y.X * v * 0.1, y.Y * v * 0.1, y.Z * v * 0.1)
-	o.CameraOffset = k(n.CFrame, - x)
-	local A = n.CFrame;
-	n.CFrame = (A + x) * z;
-	j(f.RenderStepped)
-	if n.Parent then
-		n.CFrame = A
-	end
-end))
+	if e and e.Parent and i then
+		e.CFrame = i
+	end;
+	j = false
+end)
