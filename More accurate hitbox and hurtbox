@@ -16,42 +16,45 @@ local j = d(f.RenderStepped.Wait)
 local k = d(CFrame.identity.VectorToObjectSpace)
 local l = g.LocalPlayer;
 local m, n, o;
-local p = b(function(q)
-	if not q then
+local p = CFrame.fromOrientation;
+local q = b(function(r)
+	if not r then
 		return
 	end;
 	if sethiddenproperty then
 		pcall(function()
-			sethiddenproperty(q, "NetworkOwnershipRule", Enum.NetworkOwnership.Manual)
+			sethiddenproperty(r, "NetworkOwnershipRule", Enum.NetworkOwnership.Manual)
 		end)
 	end;
 	pcall(function()
-		q.CustomPhysicalProperties = PhysicalProperties.new(0.01, 0, 0, 0, 0)
+		r.CustomPhysicalProperties = PhysicalProperties.new(0.01, 0, 0, 0, 0)
 	end)
 end)
-local r = b(function(s)
-	m = s;
-	n = h(s, "HumanoidRootPart")
-	o = h(s, "Humanoid")
-	p(n)
+local s = b(function(t)
+	m = t;
+	n = h(t, "HumanoidRootPart")
+	o = h(t, "Humanoid")
+	q(n)
 end)
 if l.Character then
-	r(l.Character)
+	s(l.Character)
 end;
-i(l.CharacterAdded, r)
+i(l.CharacterAdded, s)
 i(f.Heartbeat, b(function()
-	local t = _G.cfg;
-	if not (t and m and n and o and n.Parent) then
+	local u = _G.cfg;
+	if not (u and m and n and o and n.Parent) then
 		return
 	end;
-	local u = math.clamp(t.Prediction, 0.05, 0.25)
-	local v = n.AssemblyLinearVelocity;
-	local w = Vector3.new(v.X, v.Y * 0.15, v.Z) * u;
-	o.CameraOffset = k(n.CFrame, - w)
-	local x = n.CFrame;
-	n.CFrame = x + w;
+	local v = math.clamp(u.Prediction, 0.05, 0.2)
+	local w = n.AssemblyLinearVelocity;
+	local x = Vector3.new(w.X, w.Y * 0.2, w.Z) * v;
+	local y = n.AssemblyAngularVelocity;
+	local z = p(y.X * v * 0.1, y.Y * v * 0.1, y.Z * v * 0.1)
+	o.CameraOffset = k(n.CFrame, - x)
+	local A = n.CFrame;
+	n.CFrame = (A + x) * z;
 	j(f.RenderStepped)
 	if n.Parent then
-		n.CFrame = x
+		n.CFrame = A
 	end
 end))
