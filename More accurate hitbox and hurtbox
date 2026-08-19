@@ -9,48 +9,61 @@ local h = CFrame.identity;
 local i = nil;
 local j = false;
 local k = 0.15;
-local l = 0.1;
-local m = 0.15;
-local function n(o)
-	d = o;
-	e = o:WaitForChild("HumanoidRootPart")
-	f = o:WaitForChild("Humanoid")
+local l = 0.2;
+local function m(n)
+	d = n;
+	e = n:WaitForChild("HumanoidRootPart")
+	f = n:WaitForChild("Humanoid")
 	g = Vector3.zero;
 	h = CFrame.identity;
 	i = nil;
 	j = false
 end;
 if c.Character then
-	n(c.Character)
+	m(c.Character)
 end;
-c.CharacterAdded:Connect(n)
+c.CharacterAdded:Connect(m)
 b.Heartbeat:Connect(function()
 	if not d or not d.Parent or not e or not e.Parent or not f or f.Health <= 0 then
 		j = false;
 		return
 	end;
-	local p = _G.cfg or {}
-	local q = math.clamp(p.Prediction or k, 0.05, 0.2)
-	local r = math.clamp(p.Smoothness or l, 0.05, 0.2)
-	local s = math.clamp(p.AngularPrediction or m, 0.05, 0.2)
-	local t = e.CFrame;
-	i = t;
-	local u = e.AssemblyLinearVelocity;
-	local v = e.AssemblyAngularVelocity;
-	local w = Vector3.new(u.X, u.Y * 0.2, u.Z) * q;
-	g = g:Lerp(w, r)
-	local x = CFrame.Angles(v.X * s, v.Y * s, v.Z * s)
-	h = h:Lerp(x, r)
-	f.CameraOffset = t:VectorToObjectSpace(- g)
-	e.CFrame = t * h + g;
-	j = true
+	local o = _G.cfg or {}
+	local p = math.clamp(o.Prediction or k, 0.05, 0.15)
+	local q = math.clamp(o.AngularPrediction or l, 0.05, 0.2)
+	local r = e.CFrame;
+	i = r;
+	local s = e.AssemblyLinearVelocity;
+	local t = e.AssemblyAngularVelocity;
+	local u = s.Magnitude > 0.1;
+	local v = t.Magnitude > 0.1;
+	if u or v then
+		local w = Vector3.new(s.X, s.Y * 0.2, s.Z) * p;
+		g = g:Lerp(w, 0.011)
+		local x = CFrame.identity;
+		if v then
+			local y = t * q;
+			local z = y.Magnitude;
+			if z > 0.001 then
+				x = CFrame.fromAxisAngle(y.Unit, z)
+			end
+		end;
+		h = h:Lerp(x, 0.011)
+		e.CFrame = r + g;
+		f.CameraOffset = r:VectorToObjectSpace(- g)
+		j = true
+	else
+		if j then
+			g = Vector3.zero;
+			h = CFrame.identity;
+			f.CameraOffset = Vector3.zero;
+			e.CFrame = i;
+			j = false
+		end
+	end
 end)
 b.RenderStepped:Connect(function()
-	if not j then
-		return
-	end;
-	if e and e.Parent and i then
+	if j and e and e.Parent and i then
 		e.CFrame = i
-	end;
-	j = false
+	end
 end)
