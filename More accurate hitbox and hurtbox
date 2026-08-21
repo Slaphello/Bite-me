@@ -10,47 +10,53 @@ local i = nil;
 local j = false;
 local k = 0.15;
 local l = 0.2;
-local function m(n)
-	d = n;
-	e = n:WaitForChild("HumanoidRootPart")
-	f = n:WaitForChild("Humanoid")
+local m = 5;
+local function n(o)
+	d = o;
+	e = o:WaitForChild("HumanoidRootPart")
+	f = o:WaitForChild("Humanoid")
 	g = Vector3.zero;
 	h = CFrame.identity;
 	i = nil;
 	j = false
 end;
 if c.Character then
-	m(c.Character)
+	n(c.Character)
 end;
-c.CharacterAdded:Connect(m)
+c.CharacterAdded:Connect(n)
 b.Heartbeat:Connect(function()
 	if not d or not d.Parent or not e or not e.Parent or not f or f.Health <= 0 then
 		j = false;
 		return
 	end;
-	local o = _G.cfg or {}
-	local p = math.clamp(o.Prediction or k, 0.05, 0.15)
-	local q = math.clamp(o.AngularPrediction or l, 0.05, 0.2)
-	local r = e.CFrame;
-	i = r;
-	local s = e.AssemblyLinearVelocity;
-	local t = e.AssemblyAngularVelocity;
-	local u = s.Magnitude > 0.1;
+	local p = _G.cfg or {}
+	local q = math.clamp(p.Prediction or k, 0.05, 0.15)
+	local r = math.clamp(p.AngularPrediction or l, 0.05, 0.2)
+	local s = e.CFrame;
+	i = s;
+	local t = e.AssemblyLinearVelocity;
+	local u = e.AssemblyAngularVelocity;
 	local v = t.Magnitude > 0.1;
-	if u or v then
-		local w = Vector3.new(s.X, s.Y * 0.2, s.Z) * p;
-		g = g:Lerp(w, 0.015)
-		local x = CFrame.identity;
-		if v then
-			local y = t * q;
-			local z = y.Magnitude;
-			if z > 0.001 then
-				x = CFrame.fromAxisAngle(y.Unit, z)
+	local w = u.Magnitude > 0.1;
+	if v or w then
+		local x = Vector3.new(t.X, t.Y * 0.2, t.Z) * q;
+		local y = g:Lerp(x, 0.015)
+		if y.Magnitude > m then
+			g = y.Unit * m
+		else
+			g = y
+		end;
+		local z = CFrame.identity;
+		if w then
+			local A = u * r;
+			local B = A.Magnitude;
+			if B > 0.001 then
+				z = CFrame.fromAxisAngle(A.Unit, B)
 			end
 		end;
-		h = h:Lerp(x, 0.011)
-		e.CFrame = r + g;
-		f.CameraOffset = r:VectorToObjectSpace(- g)
+		h = h:Lerp(z, 0.011)
+		e.CFrame = s + g;
+		f.CameraOffset = s:VectorToObjectSpace(- g)
 		j = true
 	else
 		if j then
