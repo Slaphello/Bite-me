@@ -39,7 +39,7 @@ b.Heartbeat:Connect(function()
 	local v = t.Magnitude > 0.1;
 	if u or v then
 		local w = Vector3.new(s.X, s.Y * 0.2, s.Z) * p;
-		g = g:Lerp(w, 0.011)
+		g = g:Lerp(w, 0.015)
 		local x = CFrame.identity;
 		if v then
 			local y = t * q;
