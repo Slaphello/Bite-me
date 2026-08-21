@@ -36,8 +36,8 @@ b.Heartbeat:Connect(function()
 	i = s;
 	local t = e.AssemblyLinearVelocity;
 	local u = e.AssemblyAngularVelocity;
-	local v = t.Magnitude > 0.1;
-	local w = u.Magnitude > 0.1;
+	local v = t.Magnitude > 1;
+	local w = u.Magnitude > 1;
 	if v or w then
 		local x = Vector3.new(t.X, t.Y * 0.2, t.Z) * q;
 		local y = g:Lerp(x, 0.015)
