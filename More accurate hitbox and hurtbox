@@ -40,7 +40,7 @@ b.Heartbeat:Connect(function()
 	local w = u.Magnitude > 1;
 	if v or w then
 		local x = Vector3.new(t.X, t.Y * 0.2, t.Z) * q;
-		local y = g:Lerp(x, 0.015)
+		local y = g:Lerp(x, 0.011)
 		if y.Magnitude > m then
 			g = y.Unit * m
 		else
