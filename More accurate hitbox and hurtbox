@@ -38,18 +38,21 @@ if a.Character then
 	c(a.Character)
 end;
 a.CharacterAdded:Connect(c)
-b.Heartbeat:Connect(function()
+b.Heartbeat:Connect(function(a)
 	if not d or not d.Parent or not e or not e.Parent or not f or f.Health <= 0 then
 		i = false;
 		return
 	end;
-	local a = e.CFrame;
-	h = a;
-	local b = e.AssemblyLinearVelocity;
-	local b = Vector3.new(b.X, b.Y * 0.2, b.Z) * j;
-	g = g:Lerp(b, 0.01)
-	e.CFrame = a + g;
-	local a = a:ToObjectSpace(a + g).Position;
+	local b = 0.01;
+	local a = 1 - ((1 - b) ^ (a * 60))
+	a = math.clamp(a, 0, 0.015)
+	local b = e.CFrame;
+	h = b;
+	local c = e.AssemblyLinearVelocity;
+	local c = Vector3.new(c.X, c.Y * 0.2, c.Z) * j;
+	g = g:Lerp(c, a)
+	e.CFrame = b + g;
+	local a = b:ToObjectSpace(b + g).Position;
 	f.CameraOffset = - a;
 	i = true
 end)
