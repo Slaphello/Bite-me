@@ -1,75 +1,60 @@
 local a = game:GetService("Players")
 local b = game:GetService("RunService")
-local c = a.LocalPlayer;
+local c = game:GetService("Stats")
+local a = a.LocalPlayer;
 local d = nil;
 local e = nil;
 local f = nil;
 local g = Vector3.zero;
-local h = CFrame.identity;
-local i = nil;
-local j = false;
-local k = 0.15;
-local l = 0.2;
-local m = 5;
-local function n(o)
-	d = o;
-	e = o:WaitForChild("HumanoidRootPart")
-	f = o:WaitForChild("Humanoid")
-	g = Vector3.zero;
-	h = CFrame.identity;
-	i = nil;
-	j = false
-end;
-if c.Character then
-	n(c.Character)
-end;
-c.CharacterAdded:Connect(n)
-b.Heartbeat:Connect(function()
-	if not d or not d.Parent or not e or not e.Parent or not f or f.Health <= 0 then
-		j = false;
-		return
-	end;
-	local p = _G.cfg or {}
-	local q = math.clamp(p.Prediction or k, 0.05, 0.15)
-	local r = math.clamp(p.AngularPrediction or l, 0.05, 0.2)
-	local s = e.CFrame;
-	i = s;
-	local t = e.AssemblyLinearVelocity;
-	local u = e.AssemblyAngularVelocity;
-	local v = t.Magnitude > 1;
-	local w = u.Magnitude > 1;
-	if v or w then
-		local x = Vector3.new(t.X, t.Y * 0.2, t.Z) * q;
-		local y = g:Lerp(x, 0.011)
-		if y.Magnitude > m then
-			g = y.Unit * m
-		else
-			g = y
+local h = nil;
+local i = false;
+local j = 0;
+task.spawn(function()
+	local a = {}
+	local b = 60;
+	while task.wait(0.5) do
+		local c = c.Network.ServerStatsItem["Data Ping"]:GetValue()
+		table.insert(a, c / 1000)
+		if # a > b then
+			table.remove(a, 1)
 		end;
-		local z = CFrame.identity;
-		if w then
-			local A = u * r;
-			local B = A.Magnitude;
-			if B > 0.001 then
-				z = CFrame.fromAxisAngle(A.Unit, B)
-			end
+		local b = 0;
+		for a, a in ipairs(a) do
+			b = b + a
 		end;
-		h = h:Lerp(z, 0.011)
-		e.CFrame = s + g;
-		f.CameraOffset = s:VectorToObjectSpace(- g)
-		j = true
-	else
-		if j then
-			g = Vector3.zero;
-			h = CFrame.identity;
-			f.CameraOffset = Vector3.zero;
-			e.CFrame = i;
-			j = false
-		end
+		local a = b / # a;
+		j = math.clamp(a, 0.02, 0.15)
 	end
 end)
+local function c(a)
+	d = a;
+	e = a:WaitForChild("HumanoidRootPart")
+	f = a:WaitForChild("Humanoid")
+	g = Vector3.zero;
+	h = nil;
+	i = false
+end;
+if a.Character then
+	c(a.Character)
+end;
+a.CharacterAdded:Connect(c)
+b.Heartbeat:Connect(function()
+	if not d or not d.Parent or not e or not e.Parent or not f or f.Health <= 0 then
+		i = false;
+		return
+	end;
+	local a = e.CFrame;
+	h = a;
+	local b = e.AssemblyLinearVelocity;
+	local b = Vector3.new(b.X, b.Y * 0.2, b.Z) * j;
+	g = g:Lerp(b, 0.01)
+	e.CFrame = a + g;
+	local a = a:ToObjectSpace(a + g).Position;
+	f.CameraOffset = - a;
+	i = true
+end)
 b.RenderStepped:Connect(function()
-	if j and e and e.Parent and i then
-		e.CFrame = i
+	if i and e and e.Parent and h then
+		e.CFrame = h
 	end
 end)
