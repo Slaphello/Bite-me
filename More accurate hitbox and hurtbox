@@ -23,7 +23,7 @@ task.spawn(function()
 			b = b + a
 		end;
 		local a = b / # a;
-		j = math.clamp(a, 0.04, 0.15)
+		j = math.clamp(a, 0.04, 0.165)
 	end
 end)
 local function c(a)
