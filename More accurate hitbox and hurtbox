@@ -13,7 +13,7 @@ task.spawn(function()
 	local a = {}
 	local b = 60;
 	while task.wait(0.5) do
-		local c = c.Network.ServerStatsItem["Data Ping"]:GetValue() / 1500
+		local c = c.Network.ServerStatsItem["Data Ping"]:GetValue()
 		table.insert(a, c)
 		if # a > b then
 			table.remove(a, 1)
@@ -23,7 +23,7 @@ task.spawn(function()
 			b = b + a
 		end;
 		local a = b / # a;
-		j = math.clamp(a, 0.02, 0.15)
+		j = math.clamp(a, 0.04, 0.15)
 	end
 end)
 local function c(a)
