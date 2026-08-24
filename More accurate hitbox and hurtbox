@@ -43,7 +43,7 @@ b.Heartbeat:Connect(function(a)
 		i = false;
 		return
 	end;
-	local b = 0.012;
+	local b = 0.0125;
 	local a = 1 - ((1 - b) ^ (a * 60))
 	a = math.clamp(a, 0.06, 0.024)
 	local b = e.CFrame;
