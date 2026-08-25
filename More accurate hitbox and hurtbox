@@ -23,7 +23,7 @@ task.spawn(function()
 			b = b + a
 		end;
 		local a = b / # a;
-		j = math.clamp(a, 0.04, 0.165)
+		j = math.clamp(a, 0.04, 0.14)
 	end
 end)
 local function c(a)
@@ -43,13 +43,13 @@ b.Heartbeat:Connect(function(a)
 		i = false;
 		return
 	end;
-	local b = 0.015;
+	local b = 0.017;
 	local a = 1 - ((1 - b) ^ (a * 60))
-	a = math.clamp(a, 0.006, 0.02)
+	a = math.clamp(a, 0.009, 0.034)
 	local b = e.CFrame;
 	h = b;
 	local c = e.AssemblyLinearVelocity;
-	local c = Vector3.new(c.X, c.Y * 0.2, c.Z) * j;
+	local c = Vector3.new(c.X, c.Y * 0.1, c.Z) * j;
 	g = g:Lerp(c, a)
 	e.CFrame = b + g;
 	local a = b:ToObjectSpace(b + g).Position;
