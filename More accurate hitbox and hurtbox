@@ -2,62 +2,109 @@ local a = game:GetService("Players")
 local b = game:GetService("RunService")
 local c = game:GetService("Stats")
 local a = a.LocalPlayer;
-local d = nil;
-local e = nil;
-local f = nil;
-local g = Vector3.zero;
-local h = nil;
-local i = false;
-local j = 0;
+local d = 1;
+local e = 0.01;
+local f = 0.05;
+local g = 0.05;
+local h = Vector3.new(0, 2, 0)
+local i = Vector3.new(0, - 8, 0)
+local j, k = math.clamp, math.max;
+local l = Vector3.new;
+local m = Vector3.zero;
+local n = workspace;
+local o, p = n.Spherecast, n.Raycast;
+local q, r, s;
+local t = m;
+local u = m;
+local v = false;
+local w = 0.04;
+local x = RaycastParams.new()
+x.FilterType = Enum.RaycastFilterType.Exclude;
+x.RespectCanCollide = true;
+x.IgnoreWater = true;
 task.spawn(function()
-	local a = {}
-	local b = 20;
-	while task.wait(5) do
-		local c = c.Network.ServerStatsItem["Data Ping"]:GetValue() / 900
-		table.insert(a, c)
-		if # a > b then
-			table.remove(a, 1)
-		end;
-		local b = 0;
-		for a, a in ipairs(a) do
-			b = b + a
-		end;
-		local a = b / # a;
-		j = math.clamp(a, 0.04, 0.2)
-	end
+  local a = table.create(20, 0)
+  local b, d, e = 0, 0, 0;
+  local c = c.Network.ServerStatsItem["Data Ping"];
+  while task.wait(0.5) do
+    local c = c:GetValue() / 800;
+    d = d % 20 + 1;
+    e += c - a[d];
+    a[d] = c;
+    if b < 20 then
+      b += 1
+    end;
+    w = j(e / b, 0.04, 0.15)
+  end
 end)
-local function c(a)
-	d = a;
-	e = a:WaitForChild("HumanoidRootPart")
-	f = a:WaitForChild("Humanoid")
-	g = Vector3.zero;
-	h = nil;
-	i = false
+local function c(a, b)
+  local c = b.Magnitude;
+  if c < 0.01 then
+    return b
+  end;
+  local c = b / c;
+  local d = d;
+  for h = 1, 2 do
+    local a = o(n, a, d, b, x)
+    if not a then
+      return b
+    end;
+    if a.Distance > e or a.Normal:Dot(c) < - f then
+      return c * k(a.Distance - g, 0)
+    end;
+    d *= 0.5
+  end;
+  return b
+end;
+local function d(a, b)
+  local c = p(n, a + h, i, x)
+  if c then
+    local c = c.Position.Y + s.HipHeight + r.Size.Y * 0.5;
+    if a.Y < c then
+      return b + l(0, c - a.Y, 0)
+    end
+  end;
+  return b
+end;
+local function e(a)
+  q = a;
+  r = a:WaitForChild("HumanoidRootPart")
+  s = a:WaitForChild("Humanoid")
+  t = m;
+  u = m;
+  v = false;
+  x.FilterDescendantsInstances = {
+    a
+  }
+  x.CollisionGroup = r.CollisionGroup
 end;
 if a.Character then
-	c(a.Character)
+  task.spawn(e, a.Character)
 end;
-a.CharacterAdded:Connect(c)
-b.Heartbeat:Connect(function(a)
-	if not d or not d.Parent or not e or not e.Parent or not f or f.Health <= 0 then
-		i = false;
-		return
-	end;
-	local b = 0.02;
-	local a = 1 - ((1 - b) ^ (a * 60))
-	a = math.clamp(a, 0.01, 0.03)
-	local b = e.CFrame;
-	h = b;
-	local c = e.AssemblyLinearVelocity;
-	local c = Vector3.new(c.X, c.Y * 0.1, c.Z) * j;
-	g = g:Lerp(c, a)
-	e.CFrame = b + g;
-	local a = b:ToObjectSpace(b + g).Position;
-	f.CameraOffset = - a;
-	i = true
+a.CharacterAdded:Connect(function(a)
+  task.spawn(e, a)
 end)
-b.RenderStepped:Connect(function()
-	if i and e and e.Parent and h then
-		e.CFrame = h
-	end
+b.Heartbeat:Connect(function(a)
+  if not (q and q.Parent and r and r.Parent and s and s.Health > 0) then
+    v = false;
+    return
+  end;
+  local a = j(1 - (1 - 0.029) ^ (a * 60), 0.019, 0.039)
+  local b = r.CFrame;
+  local e = b.Position;
+  local f = r.AssemblyLinearVelocity * w;
+  local a = t:Lerp(f, a)
+  a = c(e, a)
+  a = d(e + a, a)
+  t = a;
+  u = a;
+  r.CFrame = b + a;
+  v = true
+end)
+b:BindToRenderStep("FunkFun", Enum.RenderPriority.First.Value, function()
+  if v and r and r.Parent then
+    r.CFrame = r.CFrame - u;
+    u = m;
+    v = false
+  end
 end)
