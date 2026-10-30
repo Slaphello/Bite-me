@@ -22,89 +22,102 @@ local y = RaycastParams.new()
 y.FilterType = Enum.RaycastFilterType.Exclude
 y.RespectCanCollide = true
 y.IgnoreWater = true
+local z
+local aa = 0
 task.spawn(function()
-  local z = table.create(20, 0)
-  local aa, ab, ac = 0, 0, 0
-  local ad = c.Network.ServerStatsItem["Data Ping"]
+  local ab = table.create(20, 0)
+  local ac, ad, ae = 0, 0, 0
+  local af = c.Network.ServerStatsItem["Data Ping"]
   while task.wait(0.5) do
-    local ae = ad:GetValue() / 800
-    ab = ab % 20 + 1
-    ac += ae - z[ab]
-    z[ab] = ae
-    if aa < 20 then
-      aa += 1
+    local ag = af:GetValue() / 900
+    ad = ad % 20 + 1
+    ae += ag - ab[ad]
+    ab[ad] = ag
+    if ac < 20 then
+      ac += 1
     end
-    x = k(ac / aa, 0.04, 0.15)
+    x = k(ae / ac, 0.03, 0.12)
   end
 end)
-local function af(ag, ah)
-  local ai = ah.Magnitude
-  if ai < 0.01 then
-    return ah
+local function ah(ai, aj)
+  local ak = aj.Magnitude
+  if ak < 0.01 then
+    return aj
   end
-  local aj = ah / ai
-  local ak = e
+  local al = aj / ak
+  local am = e
   for _ = 1, 2 do
-    local al = p(o, ag, ak, ah, y)
-    if not al then
-      return ah
+    local an = p(o, ai, am, aj, y)
+    if not an then
+      return aj
     end
-    if al.Distance > f or al.Normal:Dot(aj) < - g then
-      return aj * l(al.Distance - h, 0)
+    if an.Distance > f or an.Normal:Dot(al) < - g then
+      return al * l(an.Distance - h, 0)
     end
-    ak *= 0.5
+    am *= 0.5
   end
-  return ah
+  return aj
 end
-local function am(an, ao)
-  local ap = q(o, an + i, j, y)
-  if ap then
-    local aq = ap.Position.Y + t.HipHeight + s.Size.Y * 0.5
-    if an.Y < aq then
-      return ao + m(0, aq - an.Y, 0)
+local function ao(ap, aq)
+  local ar = q(o, ap + i, j, y)
+  if ar then
+    local as = ar.Position.Y + t.HipHeight + s.Size.Y * 0.5
+    if ap.Y < as then
+      return aq + m(0, as - ap.Y, 0)
     end
   end
-  return ao
+  return aq
 end
-local function ar(as)
-  r = as
-  s = as:WaitForChild("HumanoidRootPart")
-  t = as:WaitForChild("Humanoid")
-  u = n
-  v = n
-  w = false
+local function at()
+  r, s, t = nil, nil, nil
+  u, v, w, z = n, n, false, nil
+end
+local function au(av)
+  aa += 1
+  local aw = aa
+  at()
+  local ax = av:WaitForChild("HumanoidRootPart", 10)
+  local ay = av:WaitForChild("Humanoid", 10)
+  if aw ~= aa or not ax or not ay then
+    return
+  end
   y.FilterDescendantsInstances = {
-    as
+    av
   }
-  y.CollisionGroup = s.CollisionGroup
+  y.CollisionGroup = ax.CollisionGroup
+  t = ay
+  s = ax
+  r = av
 end
 if d.Character then
-  task.spawn(ar, d.Character)
+  task.spawn(au, d.Character)
 end
-d.CharacterAdded:Connect(function(at)
-  task.spawn(ar, at)
+d.CharacterAdded:Connect(function(az)
+  task.spawn(au, az)
 end)
-b.Heartbeat:Connect(function(au)
+b.Heartbeat:Connect(function(ba)
   if not (r and r.Parent and s and s.Parent and t and t.Health > 0) then
     w = false
     return
   end
-  local av = k(1 - (1 - 0.029) ^ (au * 60), 0.019, 0.039)
-  local aw = s.CFrame
-  local ax = aw.Position
-  local ay = s.AssemblyLinearVelocity * x
-  local az = u:Lerp(ay, av)
-  az = af(ax, az)
-  az = am(ax + az, az)
-  u = az
-  v = az
-  s.CFrame = aw + az
+  local bb = k(1 - (1 - 0.029) ^ (ba * 60), 0.019, 0.039)
+  local bc = s.CFrame
+  local bd = bc.Position
+  local be = s.AssemblyLinearVelocity * x
+  local bf = u:Lerp(be, bb)
+  bf = ah(bd, bf)
+  bf = ao(bd + bf, bf)
+  u = bf
+  v = bf
+  z = s
+  s.CFrame = bc + bf
   w = true
 end)
 b:BindToRenderStep("FunkFun", Enum.RenderPriority.First.Value, function()
-  if w and s and s.Parent then
-    s.CFrame = s.CFrame - v
-    v = n
-    w = false
+  if w and z and z.Parent then
+    z.CFrame = z.CFrame - v
   end
+  v = n
+  w = false
+  z = nil
 end)
