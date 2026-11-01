@@ -29,7 +29,7 @@ task.spawn(function()
   local ac, ad, ae = 0, 0, 0
   local af = c.Network.ServerStatsItem["Data Ping"]
   while task.wait(0.5) do
-    local ag = af:GetValue() / 900
+    local ag = af:GetValue() / 800
     ad = ad % 20 + 1
     ae += ag - ab[ad]
     ab[ad] = ag
@@ -100,7 +100,7 @@ b.Heartbeat:Connect(function(ba)
     w = false
     return
   end
-  local bb = k(1 - (1 - 0.03) ^ (ba * 60), 0.001, 0.15)
+  local bb = k(1 - (1 - 0.1) ^ (ba * 60), 0.005, 0.5)
   local bc = s.CFrame
   local bd = bc.Position
   local be = s.AssemblyLinearVelocity * x
