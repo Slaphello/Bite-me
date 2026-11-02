@@ -1,6 +1,12 @@
-local a = game:GetService("Players")
-local b = game:GetService("RunService")
-local c = game:GetService("Stats")
+local cloneref = cloneref or function(v)
+  return v
+end
+local clonefunction = clonefunction or clonefunc or function(v)
+  return v
+end
+local a = cloneref(game:GetService("Players"))
+local b = cloneref(game:GetService("RunService"))
+local c = cloneref(game:GetService("Stats"))
 local d = a.LocalPlayer
 local e = 1
 local f = 0.01
@@ -8,11 +14,13 @@ local g = 0.05
 local h = 0.05
 local i = Vector3.new(0, 2, 0)
 local j = Vector3.new(0, - 8, 0)
-local k, l = math.clamp, math.max
+local k = clonefunction(math.clamp)
+local l = clonefunction(math.max)
 local m = Vector3.new
 local n = Vector3.zero
-local o = workspace
-local p, q = o.Spherecast, o.Raycast
+local o = cloneref(workspace)
+local p = clonefunction(o.Spherecast)
+local q = clonefunction(o.Raycast)
 local r, s, t
 local u = n
 local v = n
@@ -36,7 +44,7 @@ task.spawn(function()
     if ac < 20 then
       ac += 1
     end
-    x = k(ae / ac, 0.03, 0.12)
+    x = k(ae / ac, 0.04, 0.2)
   end
 end)
 local function ah(ai, aj)
@@ -100,7 +108,7 @@ b.Heartbeat:Connect(function(ba)
     w = false
     return
   end
-  local bb = k(1 - (1 - 0.1) ^ (ba * 60), 0.005, 0.5)
+  local bb = 1 - (1 - 0.12) ^ (ba * 60)
   local bc = s.CFrame
   local bd = bc.Position
   local be = s.AssemblyLinearVelocity * x
