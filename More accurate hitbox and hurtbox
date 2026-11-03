@@ -108,7 +108,7 @@ b.Heartbeat:Connect(function(ba)
     w = false
     return
   end
-  local bb = 1 - (1 - 0.12) ^ (ba * 60)
+  local bb = 1 - (1 - 0.1) ^ (ba * 60)
   local bc = s.CFrame
   local bd = bc.Position
   local be = s.AssemblyLinearVelocity * x
