@@ -1,142 +1,511 @@
-local cloneref = cloneref or function(o)
-  return o
-end;
-local clonefunction = clonefunction or function(f)
-  return f
-end;
-if not getgenv().P_XZMulti then
-  getgenv().P_XZMulti = 1
-end;
-if not getgenv().P_YMulti then
-  getgenv().P_YMulti = 1
-end;
-if not getgenv().P_Lerp then
-  getgenv().P_Lerp = 0.05
-end;
-local a = cloneref(game:GetService("Players"));
-local b = cloneref(game:GetService("RunService"));
-local c = cloneref(game:GetService("Stats"));
-local d = a.LocalPlayer;
-local e = 1;
-local f = 0.01;
-local g = 0.05;
-local h = 0.05;
-local i = Vector3.new(0, 2, 0);
-local j = Vector3.new(0, - 8, 0);
-local k = clonefunction(math.clamp);
-local l = clonefunction(math.max);
-local m = clonefunction(Vector3.new);
-local n = Vector3.zero;
-local o = cloneref(workspace);
-local p = clonefunction(o.Spherecast);
-local q = clonefunction(o.Raycast);
-local r, s, t;
-local u = n;
-local v = n;
-local w = false;
-local x = 0.04;
-local y = RaycastParams.new();
-y.FilterType = Enum.RaycastFilterType.Exclude;
-y.RespectCanCollide = true;
-y.IgnoreWater = true;
-local z;
-local aa = 0;
-task.spawn(function()
-  local ab = table.create(20, 0);
-  local ac, ad, ae = 0, 0, 0;
-  local af = c.Network.ServerStatsItem["Data Ping"];
-  while task.wait(0.5) do
-    local ag = af:GetValue() / 1000;
-    ad = ad % 20 + 1;
-    ae += ag - ab[ad];
-    ab[ad] = ag;
-    if ac < 20 then
-      ac += 1
-    end;
-    x = k(ae / ac, 0.05, 0.15)
+-- v1.36
+local a = cloneref or function(v)
+  return v
+end
+local b = clonefunction or function(v)
+  return v
+end
+local c = getgenv()
+if c.FunkFun_Cleanup then
+  pcall(c.FunkFun_Cleanup)
+  c.FunkFun_Cleanup = nil
+end
+c.P_YMulti = c.P_YMulti or 1.35
+c.P_XZMulti = c.P_XZMulti or 1
+c.P_Lerp = c.P_Lerp or 0.1
+local d, e, f, g = 0.05, 0.5, 0.06, 0.01
+local h, i, j = 700, 0.5, 240
+local k, l = 0.25, 4
+local m, n, o = 20, 0.25, 3
+local p = a(game:GetService("Players"))
+local q = a(game:GetService("RunService"))
+local r = a(game:GetService("Stats"))
+local s = a(game:GetService("StarterGui"))
+local t = a(workspace)
+local u = p.LocalPlayer
+local v = b(t.Blockcast)
+local w = b(t.BulkMoveTo)
+local x = Enum.BulkMoveMode.FireCFrameChanged
+local y, z, A = math.clamp, math.max, math.min
+local B, C, D, E = Vector3.new, CFrame.new, Vector3.zero, CFrame.identity
+local F = os.clock
+local G = Enum.HumanoidRigType.R15
+local H = {
+  {
+    "Head"
+  },
+  {
+    "UpperTorso",
+    "LowerTorso",
+    "LeftUpperArm",
+    "LeftLowerArm",
+    "LeftHand",
+    "RightUpperArm",
+    "RightLowerArm",
+    "RightHand"
+  },
+  {
+    "LeftUpperLeg",
+    "LeftLowerLeg",
+    "LeftFoot",
+    "RightUpperLeg",
+    "RightLowerLeg",
+    "RightFoot"
+  }
+}
+local I = {
+  {
+    "Head"
+  },
+  {
+    "Torso",
+    "Left Arm",
+    "Right Arm"
+  },
+  {
+    "Left Leg",
+    "Right Leg"
+  }
+}
+local J = {
+  Script = true,
+  LocalScript = true,
+  ModuleScript = true,
+  Humanoid = true,
+  Animator = true,
+  Sound = true,
+  ParticleEmitter = true,
+  Trail = true,
+  Beam = true,
+  Fire = true,
+  Smoke = true,
+  Sparkles = true,
+  PointLight = true,
+  SpotLight = true,
+  SurfaceLight = true,
+  ForceField = true,
+  BillboardGui = true,
+  SurfaceGui = true,
+  Highlight = true,
+  ProximityPrompt = true,
+  ClickDetector = true
+}
+local K = RaycastParams.new()
+K.FilterType = Enum.RaycastFilterType.Exclude
+K.RespectCanCollide = true
+K.IgnoreWater = true
+local L, M, N, O, P = nil, nil, nil, 0, nil
+local Q, R, S, T = D, D, false, E
+local U = 0.04
+local V = U * 1000 / h
+local W, X = {}, {}
+local Y, Z, aa = {}, {}, 0
+local ab, ac, ad, ae = nil, nil, nil, false
+local af, ag = 0, 0
+local ah, ai = {}, {}
+local aj, ak, al = {}, {}, 0
+local am, an = table.create(j), table.create(j)
+local ao = nil
+local ap, aq = 0, 1
+local ar = {}
+local at = nil
+local au, av, aw, ax, ay, az = table.create(m, 0), 0, 0, 0, 0, 0
+local function ba()
+  local bb = {}
+  if L then
+    bb[1] = L
   end
-end);
-local function ah(ai, aj)
-  local ak = aj.Magnitude;
-  if ak < 0.01 then
-    return aj
-  end;
-  local al = aj / ak;
-  local am = e;
-  for _ = 1, 2 do
-    local an = p(o, ai, am, aj, y);
-    if not an then
-      return aj
-    end;
-    if an.Distance > f or an.Normal:Dot(al) < - g then
-      return al * l(an.Distance - h, 0)
-    end;
-    am *= 0.5
-  end;
-  return aj
-end;
-local function ao(ap, aq)
-  local ar = q(o, ap + i, j, y);
-  if ar then
-    local as = ar.Position.Y + t.HipHeight + s.Size.Y * 0.5;
-    if ap.Y < as then
-      return aq + m(0, as - ap.Y, 0)
+  if ab then
+    bb[# bb + 1] = ab
+  end
+  K.FilterDescendantsInstances = bb
+end
+local function mv(bb, bc)
+  w(t, bb, bc, x)
+end
+local function ub(bb)
+  pcall(q.UnbindFromRenderStep, q, bb)
+end
+local function cc()
+  local bb = ab
+  ab, ac, ad = nil, nil, nil
+  ah[1], ai[1] = nil, nil
+  table.clear(aj)
+  table.clear(ak)
+  al, ao, ap, aq = 0, nil, 0, 1
+  if bb then
+    bb:Destroy()
+  end
+  ba()
+end
+local function ce()
+  L, M, N, P = nil, nil, nil, nil
+  aa = 0
+  Q, R, S = D, D, false
+  W[1], X[1] = nil, nil
+  ae, af, ag = false, 0, 0
+  cc()
+end
+local function cf(bb, bc, bd)
+  local be = bd
+  for bf = 1, aa do
+    local bg = v(t, bb * Y[bf], Z[bf], bc, K)
+    if bg and bg.Distance < be then
+      be = bg.Distance
     end
-  end;
-  return aq
-end;
-local function at()
-  r, s, t = nil, nil, nil;
-  u, v, w, z = n, n, false, nil
-end;
-local function au(av)
-  aa += 1;
-  local aw = aa;
-  at();
-  local ax = av:WaitForChild("HumanoidRootPart", 10);
-  local ay = av:WaitForChild("Humanoid", 10);
-  if aw ~= aa or not ax or not ay then
+  end
+  if be < bd then
+    return bc * (z(be - g, 0) / bd)
+  end
+  return bc
+end
+local function cm(bb, bc, bd)
+  table.clear(Y)
+  table.clear(Z)
+  local be = bc.CFrame:Inverse()
+  for bf = 1, 3 do
+    local bg = bd[bf]
+    local bh, bi = B(1e9, 1e9, 1e9), B(- 1e9, - 1e9, - 1e9)
+    local bj = false
+    for bk = 1, # bg do
+      local bl = bb:FindFirstChild(bg[bk])
+      if bl and bl:IsA("BasePart") then
+        bj = true
+        local bm = be * bl.CFrame
+        local bn = bl.Size / 2
+        for bo = - 1, 1, 2 do
+          for bp = - 1, 1, 2 do
+            for bq = - 1, 1, 2 do
+              local br = bm * B(bn.X * bo, bn.Y * bp, bn.Z * bq)
+              bh = bh:Min(br)
+              bi = bi:Max(br)
+            end
+          end
+        end
+      end
+    end
+    if bj then
+      if bf > 1 then
+        local bs = z(- bh.X, bi.X)
+        bh = B(- bs, bh.Y, bh.Z)
+        bi = B(bs, bi.Y, bi.Z)
+      end
+      if bf == 3 then
+        bh = B(bh.X, bh.Y + e, bh.Z)
+      end
+      local bt = bi - bh
+      Y[bf] = C((bh + bi) / 2)
+      Z[bf] = B(z(bt.X - d * 2, 0.1), z(bt.Y - d * 2, 0.1), z(bt.Z - d * 2, 0.1))
+    end
+  end
+  local bu = bc.Size
+  if not Y[1] then
+    Y[1] = C(0, bu.Y * 0.75, 0)
+    Z[1] = B(bu.X * 0.45, bu.Y * 0.4, bu.Z * 0.9)
+  end
+  if not Y[2] then
+    Y[2] = E
+    Z[2] = B(bu.X * 1.8, bu.Y * 0.8, bu.Z * 0.9)
+  end
+  if not Y[3] then
+    Y[3] = C(0, - bu.Y, 0)
+    Z[3] = B(bu.X * 0.9, bu.Y * 0.8, bu.Z * 0.9)
+  end
+  aa = 3
+end
+local function dh(bb, bc)
+  for bd = 1, 3 do
+    for be = 1, # bc[bd] do
+      if not bb:FindFirstChild(bc[bd][be]) then
+        return false
+      end
+    end
+  end
+  return true
+end
+local function di(bb)
+  O += 1
+  local bc = O
+  ce()
+  P = bb
+  local bd = bb:WaitForChild("HumanoidRootPart", 10)
+  local be = bb:WaitForChild("Humanoid", 10)
+  if bc ~= O then
     return
-  end;
-  y.FilterDescendantsInstances = {
-    av
-  };
-  y.CollisionGroup = ax.CollisionGroup;
-  t = ay;
-  s = ax;
-  r = av
-end;
-if d.Character then
-  task.spawn(au, d.Character)
-end;
-d.CharacterAdded:Connect(function(az)
-  task.spawn(au, az)
-end);
-b.Heartbeat:Connect(function(ba)
-  if not (r and r.Parent and s and s.Parent and t and t.Health > 0) then
-    w = false;
+  end
+  if not (bd and be) then
+    P = nil
     return
-  end;
-  local bb = 1 - (1 - getgenv().P_Lerp) ^ (ba * 60);
-  local bc = s.CFrame;
-  local bd = bc.Position;
-  local rv = s.AssemblyLinearVelocity;
-  local cv = m(rv.X * getgenv().P_XZMulti, rv.Y * getgenv().P_YMulti, rv.Z * getgenv().P_XZMulti);
-  local be = cv * x;
-  local bf = u:Lerp(be, bb);
-  bf = ah(bd, bf);
-  bf = ao(bd + bf, bf);
-  u = bf;
-  v = bf;
-  z = s;
-  s.CFrame = bc + bf;
-  w = true
-end);
-b:BindToRenderStep("FunkFun", Enum.RenderPriority.First.Value, function()
-  if w and z and z.Parent then
-    z.CFrame = z.CFrame - v
-  end;
-  v = n;
-  w = false;
-  z = nil
+  end
+  local bf = be.RigType == G and H or I
+  local bg = F()
+  while bc == O and F() - bg < o and not dh(bb, bf) do
+    task.wait()
+  end
+  if bc ~= O then
+    return
+  end
+  P = nil
+  if not bb.Parent then
+    return
+  end
+  K.CollisionGroup = bd.CollisionGroup
+  cm(bb, bd, bf)
+  L, M, N = bb, bd, be
+  W[1] = bd
+  ba()
+end
+local function dm()
+  cc()
+  ae = false
+  local bb = L
+  if not bb then
+    return false
+  end
+  local bc = bb.Archivable
+  bb.Archivable = true
+  local bd, be = pcall(bb.Clone, bb)
+  bb.Archivable = bc
+  if not bd or not be then
+    return false
+  end
+  local bf = be:FindFirstChild("HumanoidRootPart")
+  if not (bf and bf:IsA("BasePart")) then
+    be:Destroy()
+    return false
+  end
+  local bg = be:GetDescendants()
+  for bh = 1, # bg do
+    local bi = bg[bh]
+    if J[bi.ClassName] then
+      bi:Destroy()
+    elseif bi:IsA("BasePart") then
+      bi.CanCollide = false
+      bi.CanTouch = false
+      bi.CanQuery = false
+      bi.CastShadow = false
+      bi.Massless = true
+      if bi == bf then
+        bi.Anchored = true
+      else
+        bi.Anchored = false
+        bi.Transparency = z(bi.Transparency, i)
+      end
+    end
+  end
+  local bj = {}
+  for bh = 1, # bg do
+    local bi = bg[bh]
+    if bi:IsA("Motor6D") and bi.Part1 then
+      bj[bi.Part1.Name .. ":" .. bi.Name] = bi
+    end
+  end
+  local bk = L:GetDescendants()
+  local bl = 0
+  for bh = 1, # bk do
+    local bi = bk[bh]
+    if bi:IsA("Motor6D") and bi.Part1 then
+      local bm = bj[bi.Part1.Name .. ":" .. bi.Name]
+      if bm then
+        bl += 1
+        aj[bl] = bi
+        ak[bl] = bm
+      end
+    end
+  end
+  al = bl
+  ao = table.create(j * bl)
+  ap, aq = 0, 1
+  be.Name = "a"
+  be.Parent = t
+  ab, ac, ad = be, bf, L
+  ah[1] = bf
+  ba()
+  return true
+end
+local function dz(bb)
+  ay += bb
+  if at and ay >= n then
+    ay = 0
+    local bc, bd = pcall(at.GetValue, at)
+    if bc and bd then
+      bd = bd / 1000
+      av = av % m + 1
+      aw += bd - au[av]
+      au[av] = bd
+      ax = A(ax + 1, m)
+      U = y(aw / ax, 0.04, 0.2)
+      V = U * 1000 / h
+    end
+  end
+  az += bb
+  if az >= 1 then
+    az = 0
+    local be = u.Character
+    if be and be ~= L and be ~= P and be.Parent then
+      task.spawn(di, be)
+    end
+  end
+  local bf, bg = M, N
+  if not (L and L.Parent and bf and bf.Parent and bg and bg.Health > 0) then
+    S = false
+    Q = D
+    return
+  end
+  local bh = bf.AssemblyLinearVelocity
+  local bi = U * c.P_XZMulti
+  local bj = 1 - (1 - y(c.P_Lerp, 0, 1)) ^ (bb * 60)
+  local bk = Q:Lerp(B(bh.X * bi, bh.Y * U * c.P_YMulti, bh.Z * bi), bj)
+  local bl = bf.CFrame
+  local bm = bk.Magnitude
+  if bm < g then
+    bk = D
+  elseif aa > 0 then
+    bk = cf(bl, bk, bm)
+  end
+  Q = bk
+  R = bk
+  if bk == D then
+    T = bl
+  else
+    T = bl + bk
+    X[1] = T
+    mv(W, X)
+  end
+  S = true
+end
+local function ej()
+  local bb = R
+  if bb ~= D then
+    R = D
+    local bc = M
+    if bc and bc.Parent then
+      X[1] = bc.CFrame - bb
+      mv(W, X)
+    end
+  end
+end
+local function em()
+  local bb, bc = L, M
+  if not (bb and bb.Parent and bc and bc.Parent) then
+    return
+  end
+  local bd = F()
+  local be = ac
+  if (ad ~= bb or ae or not be or not be.Parent) and bd >= af and N.Health > 0 then
+    if dm() then
+      ag = 0
+      af = bd + k
+    else
+      ag += 1
+      af = bd + A(k * 2 ^ (ag - 1), l)
+    end
+    be = ac
+  end
+  if not (be and be.Parent) then
+    return
+  end
+  local bf = al
+  local bg = ao
+  local bh = aj
+  ap += 1
+  local bi = (ap - 1) % j + 1
+  am[bi] = bd
+  an[bi] = S and T or bc.CFrame
+  S = false
+  local bj = (bi - 1) * bf
+  for bk = 1, bf do
+    bg[bj + bk] = bh[bk].Transform
+  end
+  local bl = bd - V
+  local bm = ap
+  local bn = bm - j + 1
+  if bn < 1 then
+    bn = 1
+  end
+  local bo = aq
+  if bo < bn then
+    bo = bn
+  end
+  while bo > bn and am[(bo - 1) % j + 1] > bl do
+    bo -= 1
+  end
+  while bo < bm and am[bo % j + 1] <= bl do
+    bo += 1
+  end
+  aq = bo
+  local bp = (bo - 1) % j + 1
+  local bq = bp
+  local br = 0
+  if bo < bm then
+    bq = bo % j + 1
+    local bs = am[bp]
+    if bl > bs then
+      br = y((bl - bs) / (am[bq] - bs), 0, 1)
+    end
+  end
+  local bt = an[bp]
+  if br == 0 then
+    ai[1] = bt
+  else
+    ai[1] = bt:Lerp(an[bq], br)
+  end
+  mv(ah, ai)
+  local bu = ak
+  local bv = (bp - 1) * bf
+  if br == 0 then
+    for bk = 1, bf do
+      bu[bk].Transform = bg[bv + bk]
+    end
+  else
+    local bw = (bq - 1) * bf
+    for bk = 1, bf do
+      bu[bk].Transform = bg[bv + bk]:Lerp(bg[bw + bk], br)
+    end
+  end
+end
+local function fe()
+  O += 1
+  for bb = # ar, 1, - 1 do
+    pcall(ar[bb].Disconnect, ar[bb])
+    ar[bb] = nil
+  end
+  ub("FunkFun")
+  ub("CeFw")
+  ej()
+  ce()
+end
+c.FunkFun_Cleanup = fe
+local ff, fg = pcall(function()
+  return r.Network.ServerStatsItem["Data Ping"]
 end)
+if ff then
+  at = fg
+end
+ub("FunkFun")
+ub("CeFw")
+ar[# ar + 1] = q.Heartbeat:Connect(dz)
+q:BindToRenderStep("FunkFun", Enum.RenderPriority.First.Value, ej)
+q:BindToRenderStep("CeFw", Enum.RenderPriority.Last.Value, em)
+ar[# ar + 1] = u.CharacterAdded:Connect(di)
+ar[# ar + 1] = u.CharacterRemoving:Connect(function()
+  O += 1
+  ce()
+end)
+ar[# ar + 1] = u.CharacterAppearanceLoaded:Connect(function(bb)
+  if bb == L then
+    ae = true
+  end
+end)
+if u.Character then
+  task.spawn(di, u.Character)
+end
+pcall(s.SetCore, s, "SendNotification", {
+  Title = "Hiii v1.36",
+  Icon = "",
+  Text = "Please Feedback",
+  Duration = 5,
+  Button1 = "Dismiss",
+  Callback = function()
+  end
+})
