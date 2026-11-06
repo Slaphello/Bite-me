@@ -1,111 +1,110 @@
-local a = getgenv()
-if type(a.FF_CU) == "function" then
-  pcall(a.FF_CU)
-end;
-a.P_YMulti = tonumber(a.P_YMulti) or 1;
-a.P_XZMulti = tonumber(a.P_XZMulti) or 1.3;
-a.P_Lerp = tonumber(a.P_Lerp) or 0.05;
-local b = 0.05;
-local c = game:GetService("Players")
-local d = game:GetService("RunService")
-local e = game:GetService("Stats")
-local f = game:GetService("StarterGui")
-local g = workspace;
-local h = c.LocalPlayer;
-local i = g.Blockcast;
-local j = Vector3.zero;
-local k = Vector3.zero;
-local l = false;
-local m, n, o = nil, nil, nil;
-local p = 0;
-local q = 0.01;
-local r = 0.06;
-local s = 0.04;
-local t = math.max;
-local u = math.clamp;
-local v = Vector3.new;
-local w = RaycastParams.new();
-w.FilterType = Enum.RaycastFilterType.Exclude;
-w.RespectCanCollide = true;
-w.IgnoreWater = true;
-local x, y, z = {}, {}, 0;
-local aa = true;
-local ab = {}
-local function ac(a, b)
-  local c = tonumber(a)
-  if not c or c ~= c or c == math.huge or c == - math.huge then
-    return b
-  end;
-  return c
+local g = getgenv()
+if type(g.FF_CU) == "function" then
+  pcall(g.FF_CU)
 end
-local function ad()
-  if l and n and n.Parent then
+g.P_YMulti = tonumber(g.P_YMulti) or 1
+g.P_XZMulti = tonumber(g.P_XZMulti) or 1.3
+g.P_Lerp = tonumber(g.P_Lerp) or .05
+local M = .05
+local function GS(n)
+  return game:GetService(n)
+end
+local Pl, RS, St, SG = GS"Players", GS"RunService", GS"Stats", GS"StarterGui"
+local W = workspace
+local LP = Pl.LocalPlayer
+local BC = W.Blockcast
+if type(BC) ~= "function" then
+  error("Blockcast unavailable")
+end
+local sv, ld, im = Vector3.zero, Vector3.zero, false
+local tm, rp, hm
+local cid = 0
+local MM, EO, pd = .01, .06, .04
+local mx, mn, cl, v3 = math.max, math.min, math.clamp, Vector3.new
+local rc = RaycastParams.new()
+rc.FilterType = Enum.RaycastFilterType.Exclude
+rc.RespectCanCollide = true
+rc.IgnoreWater = true
+local bf, bs = {}, {}
+local bn = 0
+local run = true
+local cn = {}
+local function sn(v, d)
+  local n = tonumber(v)
+  if not n or n ~= n or n == math.huge or n == - math.huge then
+    return d
+  end
+  return n
+end
+local function rst()
+  if im and rp and rp.Parent then
     pcall(function()
-      n.CFrame = n.CFrame - k
+      rp.CFrame = rp.CFrame - ld
     end)
-  end;
-  k = Vector3.zero;
-  l = false
+  end
+  ld = Vector3.zero
+  im = false
 end
-local function ae()
-  ad();
-  m, n, o = nil, nil, nil;
-  j = Vector3.zero;
-  table.clear(x);
-  table.clear(y);
-  z = 0
+local function cln()
+  rst()
+  tm, rp, hm = nil, nil, nil
+  sv = Vector3.zero
+  table.clear(bf)
+  table.clear(bs)
+  bn = 0
 end
-local function af(a, b, c)
-  local d = v(math.huge, math.huge, math.huge)
-  local e = v(- math.huge, - math.huge, - math.huge)
-  local f = false;
-  for _, g in ipairs(c) do
-    local h = a:FindFirstChild(g)
-    if h and h:IsA("BasePart") then
-      f = true;
-      local i = b:Inverse() * h.CFrame;
-      local j = h.Size / 2;
-      for k = - 1, 1, 2 do
-        for l = - 1, 1, 2 do
-          for m = - 1, 1, 2 do
-            local n = i * v(j.X * k, j.Y * l, j.Z * m)
-            d = v(math.min(d.X, n.X), math.min(d.Y, n.Y), math.min(d.Z, n.Z))
-            e = v(math.max(e.X, n.X), math.max(e.Y, n.Y), math.max(e.Z, n.Z))
+local function cb(m, cf, pl)
+  local a = v3(math.huge, math.huge, math.huge)
+  local b = v3(- math.huge, - math.huge, - math.huge)
+  local f = false
+  local iv = cf:Inverse()
+  for _, n in ipairs(pl) do
+    local p = m:FindFirstChild(n)
+    if p and p:IsA("BasePart") then
+      f = true
+      local r = iv * p.CFrame
+      local h = p.Size / 2
+      for x = - 1, 1, 2 do
+        for y = - 1, 1, 2 do
+          for z = - 1, 1, 2 do
+            local c = r * v3(h.X * x, h.Y * y, h.Z * z)
+            a = v3(mn(a.X, c.X), mn(a.Y, c.Y), mn(a.Z, c.Z))
+            b = v3(mx(b.X, c.X), mx(b.Y, c.Y), mx(b.Z, c.Z))
           end
         end
       end
     end
-  end;
+  end
   if f then
-    return d, e
+    return a, b
   end
 end
-local function ag(a, b, c, d, e)
-  if not b or not c then
+local function ab(i, a, b, s, yo)
+  if not a or not b then
     return
-  end;
-  if d then
-    local f = t(- b.X, c.X);
-    b = v(- f, b.Y, b.Z);
-    c = v(f, c.Y, c.Z)
-  end;
-  if e then
-    b = v(b.X, math.min(b.Y + e, c.Y - 0.1), b.Z)
-  end;
-  local f = c - b;
-  x[a] = CFrame.new((b + c) / 2);
-  y[a] = v(t(f.X - b * 2, 0.1), t(f.Y - b * 2, 0.1), t(f.Z - b * 2, 0.1))
+  end
+  if s then
+    local m = mx(- a.X, b.X)
+    a = v3(- m, a.Y, a.Z)
+    b = v3(m, b.Y, b.Z)
+  end
+  if yo then
+    a = v3(a.X, mn(a.Y + yo, b.Y - .1), a.Z)
+  end
+  local d = b - a
+  bf[i] = CFrame.new((a + b) / 2)
+  bs[i] = v3(mx(d.X - M * 2, .1), mx(d.Y - M * 2, .1), mx(d.Z - M * 2, .1))
 end
-local function ah(a, b, c)
-  table.clear(x);
-  table.clear(y);
-  z = 0;
-  local d, e, f;
-  if c.RigType == Enum.HumanoidRigType.R15 then
-    d = {
+local function scb(ch, hrp, hum)
+  table.clear(bf)
+  table.clear(bs)
+  bn = 0
+  local h, t, l
+  if hum.RigType == Enum.HumanoidRigType.R15 then
+    h = {
       "Head"
     }
-    e = {
+    t = {
       "UpperTorso",
       "LowerTorso",
       "LeftUpperArm",
@@ -115,7 +114,7 @@ local function ah(a, b, c)
       "RightLowerArm",
       "RightHand"
     }
-    f = {
+    l = {
       "LeftUpperLeg",
       "LeftLowerLeg",
       "LeftFoot",
@@ -124,212 +123,231 @@ local function ah(a, b, c)
       "RightFoot"
     }
   else
-    d = {
+    h = {
       "Head"
     }
-    e = {
+    t = {
       "Torso",
       "Left Arm",
       "Right Arm"
     }
-    f = {
+    l = {
       "Left Leg",
       "Right Leg"
     }
-  end;
-  local g, h = af(a, b.CFrame, d)
-  ag(1, g, h, false)
-  g, h = af(a, b.CFrame, e)
-  ag(2, g, h, true)
-  g, h = af(a, b.CFrame, f)
-  ag(3, g, h, true, 0.5)
-  local i = b.Size;
-  local j = {
+  end
+  local a, b = cb(ch, hrp.CFrame, h)
+  ab(1, a, b, false)
+  a, b = cb(ch, hrp.CFrame, t)
+  ab(2, a, b, true)
+  a, b = cb(ch, hrp.CFrame, l)
+  ab(3, a, b, true, .5)
+  local s = hrp.Size
+  local d = {
     {
-      CFrame.new(0, i.Y * 0.75, 0),
-      v(i.X * 0.45, i.Y * 0.4, i.Z * 0.9)
+      CFrame.new(0, s.Y * .75, 0),
+      v3(s.X * .45, s.Y * .4, s.Z * .9)
     },
     {
       CFrame.new(),
-      v(i.X * 1.8, i.Y * 0.8, i.Z * 0.9)
+      v3(s.X * 1.8, s.Y * .8, s.Z * .9)
     },
     {
-      CFrame.new(0, - i.Y, 0),
-      v(i.X * 0.9, i.Y * 0.8, i.Z * 0.9)
+      CFrame.new(0, - s.Y, 0),
+      v3(s.X * .9, s.Y * .8, s.Z * .9)
     }
-  };
-  for k = 1, 3 do
-    if not x[k] then
-      x[k] = j[k][1]
-      y[k] = j[k][2]
+  }
+  for i = 1, 3 do
+    if not bf[i] then
+      bf[i] = d[i][1]
+      bs[i] = d[i][2]
     end
-  end;
-  z = 3
+  end
+  bn = 3
 end
-local function ai(a)
-  if not aa then
+local function ic(ch)
+  if not run then
     return
-  end;
-  p = p + 1;
-  local b = p;
-  ae();
-  local c = a:WaitForChild("HumanoidRootPart", 10)
-  local d = a:WaitForChild("Humanoid", 10)
-  if not aa or b ~= p or not c or not d then
+  end
+  cid = cid + 1
+  local id = cid
+  cln()
+  local hrp = ch:WaitForChild("HumanoidRootPart", 10)
+  local hum = ch:WaitForChild("Humanoid", 10)
+  if not run or id ~= cid or not hrp or not hum then
     return
-  end;
-  if not c:IsA("BasePart") or not d:IsA("Humanoid") then
+  end
+  if not hrp:IsA("BasePart") or not hum:IsA("Humanoid") then
     return
-  end;
-  w.FilterDescendantsInstances = {
-    a
+  end
+  rc.FilterDescendantsInstances = {
+    ch
   }
   pcall(function()
-    w.CollisionGroup = c.CollisionGroup
+    rc.CollisionGroup = hrp.CollisionGroup
   end)
-  ah(a, c, d)
-  if not aa or b ~= p then
+  scb(ch, hrp, hum)
+  if not run or id ~= cid then
     return
-  end;
-  m, n, o = a, c, d
+  end
+  tm, rp, hm = ch, hrp, hum
 end
-local function aj(a)
-  local b = a.Magnitude;
-  if b < q or z == 0 or not n then
-    return a
-  end;
-  local c = n.CFrame;
-  local d = b;
-  for e = 1, z do
-    local f, g = pcall(i, g, c * x[e], y[e], a, w)
-    if f and g then
-      local h = g.Distance;
-      if type(h) == "number" and h == h and h >= 0 and h < d then
-        d = h
+local function nh(cf, d)
+  local bd, bnr
+  for i = 1, bn do
+    local ok, r = pcall(BC, W, cf * bf[i], bs[i], d, rc)
+    if ok and r then
+      local ds, n = r.Distance, r.Normal
+      if type(ds) == "number" and ds == ds and ds >= 0 and n and n:Dot(d) < - 1e-4 then
+        if not bd or ds < bd then
+          bd, bnr = ds, n
+        end
       end
     end
-  end;
-  if d < b then
-    return a * (t(d - r, 0) / b)
-  end;
-  return a
+  end
+  return bd, bnr
 end
-local function ak()
-  if not aa then
+local function pb(v)
+  if v.Magnitude < MM or bn == 0 or not rp then
+    return v
+  end
+  local bc = rp.CFrame
+  local t = Vector3.zero
+  local r = v
+  for _ = 1, 3 do
+    local m = r.Magnitude
+    if m < MM then
+      break
+    end
+    local d, n = nh(bc + t, r)
+    if not d then
+      t += r
+      break
+    end
+    local u = r / m
+    local tr = cl(d - EO, 0, m)
+    t += u * tr
+    local l = u * (m - tr)
+    r = l - n * l:Dot(n)
+  end
+  return t
+end
+local function ul()
+  if not run then
     return
-  end;
-  aa = false;
-  p = p + 1;
-  ae();
+  end
+  run = false
+  cid = cid + 1
+  cln()
   pcall(function()
-    d:UnbindFromRenderStep("FunkFun")
+    RS:UnbindFromRenderStep("FunkFun")
   end)
-  for _, a in ipairs(ab) do
+  for _, c in ipairs(cn) do
     pcall(function()
-      a:Disconnect()
+      c:Disconnect()
     end)
-  end;
-  table.clear(ab)
-  if a.FF_CU == ak then
-    a.FF_CU = nil
+  end
+  table.clear(cn)
+  if g.FF_CU == ul then
+    g.FF_CU = nil
   end
 end
-a.FF_CU = ak;
+g.FF_CU = ul
 pcall(function()
-  d:UnbindFromRenderStep("FunkFun")
+  RS:UnbindFromRenderStep("FunkFun")
 end)
-ab[# ab + 1] = h.CharacterAdded:Connect(function(a)
-  task.spawn(ai, a)
-end)
-ab[# ab + 1] = h.CharacterRemoving:Connect(function()
-  p = p + 1;
-  ae()
-end)
-if h.Character then
-  task.spawn(ai, h.Character)
+table.insert(cn, LP.CharacterAdded:Connect(function(c)
+  task.spawn(ic, c)
+end))
+table.insert(cn, LP.CharacterRemoving:Connect(function()
+  cid = cid + 1
+  cln()
+end))
+if LP.Character then
+  task.spawn(ic, LP.Character)
 end
 task.spawn(function()
-  local a = table.create(20, 0)
-  local b, c, d = 0, 0, 0;
-  local e = nil;
-  while aa do
-    if not e then
-      local f, g = pcall(function()
-        return e.Network.ServerStatsItem["Data Ping"]
+  local ph = table.create(20, 0)
+  local hi, sp, cp = 0, 0, 0
+  local ps
+  while run do
+    if not ps then
+      local ok, s = pcall(function()
+        return St.Network.ServerStatsItem["Data Ping"]
       end)
-      if f then
-        e = g
+      if ok then
+        ps = s
       end
-    end;
-    if e then
-      local f, g = pcall(function()
-        return tonumber(e:GetValue())
+    end
+    if ps then
+      local ok, v = pcall(function()
+        return tonumber(ps:GetValue())
       end)
-      if f and g and g >= 0 and g < math.huge then
-        b = b % 20 + 1;
-        c = c - a[b]
-        a[b] = g / 1000;
-        c = c + a[b]
-        d = math.min(d + 1, 20)
-        s = u(c / d, 0.04, 0.2)
+      if ok and v and v >= 0 and v < math.huge then
+        hi = hi % 20 + 1
+        sp = sp - ph[hi]
+        ph[hi] = v / 1000
+        sp = sp + ph[hi]
+        cp = mn(cp + 1, 20)
+        pd = cl(sp / cp, .04, .2)
       else
-        e = nil
+        ps = nil
       end
-    end;
-    task.wait(0.5)
+    end
+    task.wait(.5)
   end
 end)
-ab[# ab + 1] = d.Heartbeat:Connect(function(b)
-  if not aa then
+table.insert(cn, RS.Heartbeat:Connect(function(dt)
+  if not run then
     return
-  end;
-  ad()
-  if not (m and m.Parent and n and n.Parent and o and o.Parent and o.Health > 0) then
+  end
+  rst()
+  if not (tm and tm.Parent and rp and rp.Parent and hm and hm.Parent and hm.Health > 0) then
+    sv = Vector3.zero
     return
-  end;
-  local c = n.CFrame;
-  local d = n.AssemblyLinearVelocity;
-  local e = s * t(ac(a.P_XZMulti, 1.3), 0)
-  local f = s * t(ac(a.P_YMulti, 1), 0)
-  local g = v(d.X * e, d.Y * f, d.Z * e)
-  local h = u(ac(a.P_Lerp, 0.05), 0, 1)
-  local i = 1 - (1 - h) ^ (t(ac(b, 0), 0) * 60)
-  local p = aj(j:Lerp(g, i))
-  j = p;
-  if p.Magnitude > 0 then
-    k = p;
-    local q = pcall(function()
-      n.CFrame = c + p
+  end
+  local cf = rp.CFrame
+  local av = rp.AssemblyLinearVelocity
+  local xz = pd * mx(sn(g.P_XZMulti, 1.3), 0)
+  local y = pd * mx(sn(g.P_YMulti, 1), 0)
+  local tv = v3(av.X * xz, av.Y * y, av.Z * xz)
+  local la = cl(sn(g.P_Lerp, .05), 0, 1)
+  local a = 1 - (1 - la) ^ (mx(sn(dt, 0), 0) * 60)
+  sv = sv:Lerp(tv, a)
+  local pv = pb(sv)
+  if pv.Magnitude > 0 then
+    local ok = pcall(function()
+      rp.CFrame = cf + pv
     end)
-    l = q;
-    if not q then
-      k = Vector3.zero
+    if ok then
+      ld = pv
+      im = true
+    else
+      ld = Vector3.zero
+      im = false
     end
   else
-    k = Vector3.zero;
-    l = false
+    ld = Vector3.zero
+    im = false
   end
-end)
-d:BindToRenderStep("FunkFun", Enum.RenderPriority.First.Value, function()
-  ad()
-end)
+end))
+RS:BindToRenderStep("FunkFun", Enum.RenderPriority.First.Value, rst)
 task.spawn(function()
-  for a = 1, 3 do
-    if not aa then
+  for i = 1, 3 do
+    if not run then
       return
-    end;
-    local b = pcall(f.SetCore, f, "SendNotification", {
-      Title = "Hiii v1.34",
+    end
+    if pcall(SG.SetCore, SG, "SendNotification", {
+      Title = "Hiii v1.36",
       Icon = "",
       Text = "Please Feedback",
       Duration = 5,
       Button1 = "Dismiss",
       Callback = function()
       end
-    })
-    if b then
+    }) then
       return
-    end;
-    task.wait(0.5)
+    end
+    task.wait(.5)
   end
 end)
